@@ -68,8 +68,9 @@ export default function Admin({ setToken }) {
 
   // ── Create account screen ────────────────────────────────────────────────
   // Checked BEFORE the login gate, so it works even with no token yet.
-  // NEW: this whole block.
-  if (path.startsWith("/create-account")) {
+  // NEW: this whole block. Lives under /admin/* so App.jsx's
+  // startsWith("/admin") gate actually routes here.
+  if (path.startsWith("/admin/create-account")) {
     return <CreateAccount />;
   }
 
@@ -93,7 +94,7 @@ export default function Admin({ setToken }) {
             <button className="admin-primary" type="submit">Login</button>
             {/* NEW: link to create-account screen */}
             <p className="adm-label" style={{ marginTop: 14, textAlign: "center" }}>
-              <a href="/create-account">Create account</a>
+              <a href="/admin/create-account">Create account</a>
             </p>
           </form>
         </main>
