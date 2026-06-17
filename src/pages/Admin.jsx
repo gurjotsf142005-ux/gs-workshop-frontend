@@ -3,6 +3,7 @@ import CustomCursor from "../components/common/CustomCursor";
 import Dashboard from "../components/admin/Dashboard";
 import Projects  from "../components/admin/Projects";
 import Settings  from "../components/admin/Settings";
+import CreateAccount from "../components/admin/CreateAccount"; // ← NEW
 import { loginAdmin, getSettings, updateSettings } from "../services/api";
 
 export default function Admin({ setToken }) {
@@ -65,6 +66,13 @@ export default function Admin({ setToken }) {
     }
   }
 
+  // ── Create account screen ────────────────────────────────────────────────
+  // Checked BEFORE the login gate, so it works even with no token yet.
+  // NEW: this whole block.
+  if (path.startsWith("/create-account")) {
+    return <CreateAccount />;
+  }
+
   // ── Login gate ──────────────────────────────────────────────────────────────
   if (!localToken) {
     return (
@@ -83,6 +91,10 @@ export default function Admin({ setToken }) {
               <input type="password" value={authForm.password} onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })} required />
             </label>
             <button className="admin-primary" type="submit">Login</button>
+            {/* NEW: link to create-account screen */}
+            <p className="adm-label" style={{ marginTop: 14, textAlign: "center" }}>
+              <a href="/create-account">Create account</a>
+            </p>
           </form>
         </main>
       </>
