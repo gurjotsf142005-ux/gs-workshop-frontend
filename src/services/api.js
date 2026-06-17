@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Remove /api from the end of the fallback string
+const BASE = import.meta.env.VITE_API_URL || 'https://gs-workshop.onrender.com/api';
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
