@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { registerAdmin } from "../services/api";
-import CustomCursor from "../components/common/CustomCursor";
+import { registerAdmin } from "../../services/api";
+import CustomCursor from "../common/CustomCursor";
 
 export default function CreateAccount() {
   const [form, setForm] = useState({
