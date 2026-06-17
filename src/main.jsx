@@ -4,7 +4,7 @@ import App from "./App";
 import "./styles/global.css";
 import "./styles/admin.css";
 import "./styles/premium.css";
-import "./styles/premiumroyal.css"
+import "./styles/Premiumroyal.css"
 import "./styles/Navmobilemenu.css"
 import "./styles/Zzfinalfixes.css"
 import "./styles/Navbarroyal.css"
