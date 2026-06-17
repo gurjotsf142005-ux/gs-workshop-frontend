@@ -1,0 +1,86 @@
+/* ════════════════════════════════════════════════════════════════
+   NAVBAR — MOBILE MENU FIX
+   This block REPLACES:
+     - the .gs-mobile-menu / .is-open / .pm-sheet rules in section 16
+   And ADDS (these didn't exist anywhere in premium-royal.css before):
+     - .gs-hide-mobile
+     - .gs-burger / .line-1 / .line-2
+
+   Why the old version was broken:
+   1. Navbar.jsx mounts/unmounts .gs-mobile-menu via AnimatePresence —
+      it never adds an "is-open" class. The old CSS hid the menu by
+      default (max-height: 0; overflow: hidden;) and only revealed it
+      via .is-open, which never got applied — so the menu was always
+      visually collapsed to 0 height even while mounted.
+   2. .gs-mobile-menu was rendered as a SIBLING of <nav>, not a child,
+      so `position: absolute; top: 100%;` resolved against the page
+      wrapper instead of the navbar, pushing the menu far off-screen.
+      (Fixed on the JSX side — see updated Navbar.jsx.)
+   3. .gs-hide-mobile and .gs-burger were referenced in the component
+      but never defined anywhere in this stylesheet, so the desktop
+      links never collapsed and the burger icon had no visible bars.
+════════════════════════════════════════════════════════════════ */
+
+/* Hamburger button — hidden on desktop, shown on mobile below */
+.gs-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.gs-burger .line-1,
+.gs-burger .line-2 {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform 0.3s var(--ease-out), opacity 0.3s ease;
+}
+.gs-burger .line-1.open { transform: translateY(3.5px) rotate(45deg); }
+.gs-burger .line-2.open { transform: translateY(-3.5px) rotate(-45deg); }
+
+/* Mobile dropdown — now a CHILD of <nav>, so top:100% sits right under it.
+   .navbar already has position: sticky (a positioned ancestor), so no
+   max-height/is-open gate is needed: AnimatePresence mounting/unmounting
+   the element IS the show/hide mechanism. */
+.gs-mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s5) var(--s5) var(--s6);
+  background: rgba(10, 9, 5, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--g-border);
+}
+.gs-mobile-menu a {
+  color: var(--dark-txt);
+  font-size: 18px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-style: italic;
+  padding: 12px 0;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.gs-mobile-menu a:hover { color: var(--g-bright); }
+
+/* Collapse the desktop nav, reveal the burger */
+@media (max-width: 768px) {
+  .gs-hide-mobile { display: none !important; }
+  .gs-burger { display: flex; }
+}
