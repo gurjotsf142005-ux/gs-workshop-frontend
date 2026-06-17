@@ -792,121 +792,84 @@ a   { text-decoration: none; color: inherit; }
   body.custom-cursor-ready button { cursor: none; }
 }
 
-/* Why: cursor: none was unconditional, so the native cursor
-   disappears the instant the page loads on any device that reports
-   hover support — regardless of whether your custom cursor component
-   (the one rendering .cursor-dot / .cursor-ring) has actually
-   mounted yet, or whether it mounts at all on a given page. If that
-   component is slow, errors, or isn't present, visitors get no
-   cursor whatsoever.
-
-   With this change, the native cursor only hides once your cursor
-   component says it's actually ready to take over. In whatever file
-   renders <span className="cursor-dot" /> and <span className=
-   "cursor-ring" />, add this to its mount effect:
-
-     useEffect(() => {
-       document.body.classList.add("custom-cursor-ready");
-       return () => document.body.classList.remove("custom-cursor-ready");
-     }, []);
-
-   If you paste that component here, I can wire this in precisely
-   and also check the mousemove tracking logic itself while I'm
-   in there. *//* ── Mobile hero: keep two-column like desktop ─────────────────────── */
+/* ── ROYAL MOBILE HERO — replace the @media (max-width: 768px) .hero block ── */
 @media (max-width: 768px) {
   .hero {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 40px 16px 48px;
+    grid-template-columns: 1fr 1fr;   /* equal halves */
+    gap: 12px;
+    padding: 20px 14px 28px;
     min-height: calc(100vh - 64px);
     align-items: center;
   }
 
-  /* Cancel the photo-first order from premium.css */
-  .hero-right {
-    order: 0 !important;
+  /* Photo LEFT, text RIGHT — cancel any reverse-order rules */
+  .hero-left  { order: 2; }  /* text → right */
+  .hero-right { order: 1; }  /* photo → left */
+
+  /* Photo card — tall & elegant */
+  .hero-photo-card {
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+    max-height: none;
   }
 
+  /* Eyebrow — compact */
+  .hero-eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  /* Heading */
   .hero-h1 {
-    font-size: clamp(20px, 5vw, 32px);
-    letter-spacing: -0.5px;
-    margin-bottom: 14px;
+    font-size: clamp(16px, 4.8vw, 22px);
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
   }
 
+  /* Body text */
   .hero-p {
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 18px;
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    max-width: 100%;
   }
 
+  /* Buttons — stacked & full-width */
   .hero-btns {
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .btn-fill, .btn-ghost {
-    padding: 10px 16px;
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .hero-mini-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
+    margin-bottom: 12px;
+  }
+  .btn-fill, .btn-ghost {
+    padding: 9px 12px;
+    font-size: 11px;
+    text-align: center;
+    border-radius: 9px;
   }
 
-  .mini-card {
-    padding: 10px 10px;
-    min-width: 0;
-  }
-
-  .mini-card-val { font-size: 16px; }
-  .mini-card-label { font-size: 9px; }
-  .mini-card-sub { font-size: 10px; }
-
+  /* Tech chips — show 3 max, small */
   .hero-right-bottom {
-    display: none; /* hide tech chips on mobile to save space */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .tech-chip {
+    font-size: 9px;
+    padding: 3px 8px;
   }
 
-  /* Keep 3D tilt frame on mobile */
-  .pm-hero-frame {
-    max-height: none;
-    height: 100%;
-    border-radius: 14px;
-  }
-
-  .pm-hero-orbit {
-    display: block !important;
-    inset: -10px;
-  }
+  /* Mini-cards — hide to keep it clean */
+  .hero-mini-cards { display: none; }
 }
 
 @media (max-width: 480px) {
   .hero {
-    grid-template-columns: 1fr 1fr;
-    padding: 28px 12px 40px;
-    gap: 14px;
+    padding: 16px 12px 24px;
+    gap: 10px;
   }
-
-  .hero-h1 {
-    font-size: clamp(16px, 4.5vw, 22px);
-  }
-
-  .hero-eyebrow {
-    font-size: 9px;
-    margin-bottom: 10px;
-  }
-
-  .hero-p { display: none; } /* hide on very small screens */
-
-  .hero-btns {
-    gap: 6px;
-  }
-
-  .btn-fill, .btn-ghost {
-    padding: 8px 10px;
-    font-size: 11px;
-  }
+  .hero-h1  { font-size: clamp(14px, 4.5vw, 19px); }
+  .hero-p   { display: none; }
 }
