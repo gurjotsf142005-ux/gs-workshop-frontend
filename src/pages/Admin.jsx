@@ -10,24 +10,20 @@ export default function Admin({ setToken }) {
   const [localToken, setLocalToken] = useState(() => localStorage.getItem("adminToken"));
   const [authForm, setAuthForm]     = useState({ email: "", password: "" });
   const [error, setError]           = useState("");
-  const [path, setPath]             = useState(window.location.pathname);
+  const [, forceUpdate]             = useState(0);
   const [settings, setSettings]     = useState(null);
   const [message, setMessage]       = useState("");
   const [saving, setSaving]         = useState(false);
 
-  // sync path on any navigation (back button, link clicks, etc)
+  // Read path directly — no useState for path
+  const path = window.location.pathname;
+
   useEffect(() => {
-    const handlePopState = () => setPath(window.location.pathname);
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    const sync = () => forceUpdate(n => n + 1);
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  // Check path on every render (catches link clicks)
-  useEffect(() => {
-    setPath(window.location.pathname);
-  });
-
-  // load settings when logged in
   useEffect(() => {
     if (!localToken) return;
     getSettings()
@@ -71,13 +67,12 @@ export default function Admin({ setToken }) {
     }
   }
 
-  // ── Create account screen ────────────────────────────────────────────────
-  // Checked BEFORE the login gate, so it works even with no token yet.
+  // ── Create account — checked BEFORE login gate ──────────────────
   if (path.startsWith("/admin/create-account")) {
     return <CreateAccount />;
   }
 
-  // ── Login gate ──────────────────────────────────────────────────────────────
+  // ── Login gate ──────────────────────────────────────────────────
   if (!localToken) {
     return (
       <>
@@ -104,7 +99,7 @@ export default function Admin({ setToken }) {
     );
   }
 
-  // ── Route to correct admin page ─────────────────────────────────────────────
+  // ── Logged-in routes ────────────────────────────────────────────
   return (
     <>
       <CustomCursor />
