@@ -3,7 +3,7 @@ import CustomCursor from "../components/common/CustomCursor";
 import Dashboard from "../components/admin/Dashboard";
 import Projects  from "../components/admin/Projects";
 import Settings  from "../components/admin/Settings";
-import CreateAccount from "../components/admin/CreateAccount"; // ← NEW
+import CreateAccount from "../components/admin/CreateAccount";
 import { loginAdmin, getSettings, updateSettings } from "../services/api";
 
 export default function Admin({ setToken }) {
@@ -15,12 +15,17 @@ export default function Admin({ setToken }) {
   const [message, setMessage]       = useState("");
   const [saving, setSaving]         = useState(false);
 
-  // sync path on navigation
+  // sync path on any navigation (back button, link clicks, etc)
   useEffect(() => {
-    const sync = () => setPath(window.location.pathname);
-    window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
+    const handlePopState = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  // Check path on every render (catches link clicks)
+  useEffect(() => {
+    setPath(window.location.pathname);
+  });
 
   // load settings when logged in
   useEffect(() => {
@@ -68,8 +73,6 @@ export default function Admin({ setToken }) {
 
   // ── Create account screen ────────────────────────────────────────────────
   // Checked BEFORE the login gate, so it works even with no token yet.
-  // NEW: this whole block. Lives under /admin/* so App.jsx's
-  // startsWith("/admin") gate actually routes here.
   if (path.startsWith("/admin/create-account")) {
     return <CreateAccount />;
   }
@@ -92,7 +95,6 @@ export default function Admin({ setToken }) {
               <input type="password" value={authForm.password} onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })} required />
             </label>
             <button className="admin-primary" type="submit">Login</button>
-            {/* NEW: link to create-account screen */}
             <p className="adm-label" style={{ marginTop: 14, textAlign: "center" }}>
               <a href="/admin/create-account">Create account</a>
             </p>
