@@ -1,24 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════════
    GLOBAL STYLES — GS WorkShope portfolio
-   Royal + Premium Edition
-   ✓ Desktop hero: asymmetric grid, gold accents, depth shadows
-   ✓ Mobile hero: photo LEFT | text RIGHT split (2-col, stays split)
-   ✓ Font-weight boosted site-wide
-   ✓ Body text darkened for readability
-   ✓ Marquee CSS animation (no JS)
-   ✓ Custom cursor with class-gated hide
-   ✓ Projects grid
-
-   NOTE: this file is the single source of truth for .hero on mobile.
-   The old mid-file "HERO — MOBILE" block, the later "HERO MOBILE FIX"
-   !important block, and the standalone hero-mobile-final.css have all
-   been merged into ONE block below. Don't add another one elsewhere.
+   FIXED: Background color now fills 100% on all devices
 ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Reset & base ─────────────────────────────────────────────────── */
+/* ── Reset & base ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+  background: #FAF7F2;
+  scroll-behavior: smooth;
+  width: 100%;
+  height: 100%;
+  color-scheme: light;
+}
 
 body {
   font-family: "DM Sans", "Inter", system-ui, sans-serif;
@@ -28,6 +22,19 @@ body {
   font-weight: 400;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* React root div — fill entire viewport */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background: #FAF7F2;
 }
 
 img { display: block; max-width: 100%; }
@@ -200,12 +207,10 @@ a   { text-decoration: none; color: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════
    HERO — DESKTOP (≥ 769px)
-   Royal asymmetric layout: 55% text / 45% photo
-   Gold accent line under eyebrow, deep shadow on photo card
 ═══════════════════════════════════════════════════════════════════ */
 .hero {
   display: grid;
-  grid-template-columns: 55fr 45fr;   /* text gets more breathing room */
+  grid-template-columns: 55fr 45fr;
   gap: 56px;
   align-items: center;
   padding: 88px 48px 72px;
@@ -214,7 +219,6 @@ a   { text-decoration: none; color: inherit; }
   min-height: calc(100vh - 64px);
 }
 
-/* Eyebrow — small caps with gold left-border accent */
 .hero-eyebrow {
   display: flex;
   align-items: center;
@@ -223,7 +227,7 @@ a   { text-decoration: none; color: inherit; }
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8a6a32;          /* gold-deep */
+  color: #8a6a32;
   margin-bottom: 22px;
 }
 
@@ -234,7 +238,6 @@ a   { text-decoration: none; color: inherit; }
   background: linear-gradient(90deg, #b08d4a, #d4af6a);
 }
 
-/* Main heading — large, tight, impactful */
 .hero-h1 {
   font-size: clamp(40px, 5.5vw, 68px);
   font-weight: 900;
@@ -252,10 +255,9 @@ a   { text-decoration: none; color: inherit; }
 .hero-h1 .italic {
   font-style: italic;
   font-weight: 600;
-  color: #8a6a32;          /* gold tint on italic word */
+  color: #8a6a32;
 }
 
-/* Body paragraph */
 .hero-p {
   font-size: 17px;
   font-weight: 400;
@@ -265,7 +267,6 @@ a   { text-decoration: none; color: inherit; }
   margin-bottom: 34px;
 }
 
-/* CTA buttons */
 .hero-btns {
   display: flex;
   gap: 14px;
@@ -306,7 +307,6 @@ a   { text-decoration: none; color: inherit; }
   transform: translateY(-2px);
 }
 
-/* Mini stat cards */
 .hero-mini-cards { display: flex; gap: 14px; flex-wrap: wrap; }
 
 .mini-card {
@@ -330,13 +330,6 @@ a   { text-decoration: none; color: inherit; }
 .mini-card-val   { font-size: 20px; font-weight: 800; color: #111; margin: 3px 0; }
 .mini-card-sub   { font-size: 11px; color: #aaa; }
 
-/* ── Photo card (legacy/unused) ───────────────────────────────────────
-   NOTE: Hero.jsx renders className="pm-hero-frame", not "hero-photo-card".
-   The rules below never match any element in the current markup — they
-   were the styling for an earlier version of the photo card before it
-   was renamed to .pm-hero-frame (defined in premium.css). Left in place
-   since removing them isn't necessary for anything to work, but they're
-   dead code if you want to clean further later. ─────────────────────── */
 .hero-photo-card {
   border-radius: 20px;
   overflow: hidden;
@@ -344,8 +337,8 @@ a   { text-decoration: none; color: inherit; }
   background: #e8e4de;
   position: relative;
   box-shadow:
-    0 2px 0 rgba(212,175,106,0.5) inset,   /* gold top rim */
-    0 40px 80px -20px rgba(0,0,0,0.28),     /* deep lift shadow */
+    0 2px 0 rgba(212,175,106,0.5) inset,
+    0 40px 80px -20px rgba(0,0,0,0.28),
     0 8px 24px rgba(0,0,0,0.1);
   transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
@@ -410,7 +403,6 @@ a   { text-decoration: none; color: inherit; }
 .hero-photo-overlay span   { font-size: 11px; opacity: 0.8; letter-spacing: 0.3px; }
 .hero-photo-overlay strong { font-size: 16px; font-weight: 700; color: #d4af6a; }
 
-/* Tech chips below photo */
 .hero-right-bottom { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 
 .tech-chip {
@@ -424,8 +416,6 @@ a   { text-decoration: none; color: inherit; }
   background: linear-gradient(180deg, #fff 0%, #fdfaf3 100%);
 }
 
-/* ── Hero photo & chips fade-in via CSS (mount animation, plays once
-   by design — unrelated to the tilt bug, leave as-is) ──────────────── */
 .hero-photo-fadein {
   animation: hero-photo-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -448,7 +438,6 @@ a   { text-decoration: none; color: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════
    HERO — LAPTOP (769px – 1100px)
-   Slightly tighter but still premium 2-col
 ═══════════════════════════════════════════════════════════════════ */
 @media (min-width: 769px) and (max-width: 1100px) {
   .hero {
@@ -478,20 +467,12 @@ a   { text-decoration: none; color: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════
    HERO — MOBILE (≤ 768px)
-   SINGLE SOURCE OF TRUTH — this is the only place .hero / .pm-hero-frame
-   / .hero-left / .hero-right get restyled for mobile in the whole
-   project. Don't add another copy of this in premium.css or anywhere
-   else — that's exactly the duplication that was breaking things.
-
-   .hero-right (photo) is first in the JSX DOM, .hero-left (text) is
-   second — that alone puts photo in column 1, text in column 2.
-   order: 0 on both just makes sure nothing upstream can sneak a
-   different order value back in.
+   2-COLUMN: Photo 60% | Text 40%
 ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .hero {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.6fr 0.4fr;
     gap: 12px;
     padding: 20px 14px 32px;
     min-height: calc(100vh - 64px);
@@ -503,17 +484,12 @@ a   { text-decoration: none; color: inherit; }
     order: 0;
   }
 
-  /* Defensive: forces the photo column to fill its grid track no
-     matter what — guards against anything upstream (a stray width,
-     a flex/inline-block context, etc.) shrinking it to content size. */
   .hero-right,
   .hero-photo-wrap {
     width: 100%;
     min-width: 0;
   }
 
-  /* Photo frame — full portrait, premium shadow (matches the actual
-     .pm-hero-frame element rendered in Hero.jsx) */
   .pm-hero-frame {
     aspect-ratio: 3 / 4;
     border-radius: 16px;
@@ -534,7 +510,6 @@ a   { text-decoration: none; color: inherit; }
   .pm-hero-badge span   { font-size: 9px; }
   .pm-hero-badge strong { font-size: 11px; }
 
-  /* Eyebrow */
   .hero-eyebrow {
     font-size: 8px;
     letter-spacing: 0.8px;
@@ -543,7 +518,6 @@ a   { text-decoration: none; color: inherit; }
   }
   .h-line { width: 16px; }
 
-  /* Heading */
   .hero-h1 {
     font-size: clamp(15px, 4.6vw, 22px);
     letter-spacing: -0.4px;
@@ -551,7 +525,6 @@ a   { text-decoration: none; color: inherit; }
     line-height: 1.1;
   }
 
-  /* Body text */
   .hero-p {
     font-size: 11px;
     line-height: 1.5;
@@ -559,7 +532,6 @@ a   { text-decoration: none; color: inherit; }
     max-width: 100%;
   }
 
-  /* Buttons — stacked, full-width */
   .hero-btns {
     flex-direction: column;
     gap: 6px;
@@ -575,10 +547,8 @@ a   { text-decoration: none; color: inherit; }
     box-sizing: border-box;
   }
 
-  /* Mini stat cards — hide to save space */
   .hero-mini-cards { display: none; }
 
-  /* Tech chips — tiny, wrap freely */
   .hero-right-bottom {
     display: flex;
     flex-wrap: wrap;
@@ -591,16 +561,58 @@ a   { text-decoration: none; color: inherit; }
   }
 }
 
-/* Very small phones */
+/* ═══════════════════════════════════════════════════════════════════
+   VERY SMALL PHONES (≤ 400px)
+═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
   .hero {
-    padding: 14px 10px 24px;
+    grid-template-columns: 0.6fr 0.4fr;
+    padding: 12px 8px 20px;
     gap: 8px;
   }
-  .hero-h1  { font-size: clamp(13px, 4.2vw, 17px); }
-  .hero-p   { display: none; }
-  .hero-eyebrow { display: none; }
-  .hero-right-bottom { display: none; }
+
+  .hero-eyebrow {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    gap: 4px;
+  }
+  .h-line { width: 12px; }
+
+  .hero-h1 {
+    font-size: clamp(12px, 3.8vw, 16px);
+    margin-bottom: 5px;
+    line-height: 1.05;
+  }
+
+  .hero-p {
+    font-size: 9px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .hero-btns {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .hero-btns .btn-fill,
+  .hero-btns .btn-ghost {
+    padding: 7px 10px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+
+  .hero-right-bottom {
+    gap: 3px;
+    margin-top: 4px;
+  }
+  .tech-chip {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .pm-hero-badge span   { font-size: 8px; }
+  .pm-hero-badge strong { font-size: 10px; }
 }
 
 /* ── Marquee ──────────────────────────────────────────────────────── */
@@ -640,7 +652,7 @@ a   { text-decoration: none; color: inherit; }
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(212,175,106,0.6);    /* gold dots in marquee */
+  background: rgba(212,175,106,0.6);
   flex-shrink: 0;
 }
 
