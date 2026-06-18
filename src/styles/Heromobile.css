@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════════════
+   HERO — MOBILE (≤ 768px) — FIXED
+   Photo column now gets 60%, text gets 40% for better photo visibility
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hero {
+    display: grid;
+    grid-template-columns: 0.6fr 0.4fr;  /* ← CHANGED: 60% photo, 40% text */
+    gap: 12px;
+    padding: 20px 14px 32px;
+    min-height: calc(100vh - 64px);
+    align-items: center;
+  }
+
+  .hero-left,
+  .hero-right {
+    order: 0;
+  }
+
+  /* Defensive: forces the photo column to fill its grid track */
+  .hero-right,
+  .hero-photo-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Photo frame — full portrait, premium shadow */
+  .pm-hero-frame {
+    aspect-ratio: 3 / 4;
+    border-radius: 16px;
+    max-height: none;
+    width: 100%;
+    box-shadow:
+      0 2px 0 rgba(212, 175, 106, 0.4) inset,
+      0 20px 44px -10px rgba(0, 0, 0, 0.24),
+      0 4px 14px rgba(0, 0, 0, 0.1);
+  }
+
+  .pm-hero-orbit {
+    display: block;
+    inset: -10px;
+    border-radius: 22px;
+  }
+
+  .pm-hero-badge span   { font-size: 9px; }
+  .pm-hero-badge strong { font-size: 11px; }
+
+  /* Eyebrow */
+  .hero-eyebrow {
+    font-size: 8px;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    gap: 6px;
+  }
+  .h-line { width: 16px; }
+
+  /* Heading */
+  .hero-h1 {
+    font-size: clamp(15px, 4.6vw, 22px);
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+
+  /* Body text */
+  .hero-p {
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+
+  /* Buttons — stacked, full-width */
+  .hero-btns {
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .hero-btns .btn-fill,
+  .hero-btns .btn-ghost {
+    padding: 9px 12px;
+    font-size: 11px;
+    text-align: center;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Mini stat cards — hide to save space */
+  .hero-mini-cards { display: none; }
+
+  /* Tech chips — tiny, wrap freely */
+  .hero-right-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .tech-chip {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+}
+
+/* Very small phones — stack vertically */
+@media (max-width: 400px) {
+  .hero {
+    grid-template-columns: 1fr;  /* ← Stack photo above text */
+    padding: 14px 10px 24px;
+    gap: 8px;
+  }
+  .hero-h1  { font-size: clamp(13px, 4.2vw, 17px); }
+  .hero-p   { display: none; }
+  .hero-eyebrow { display: none; }
+  .hero-right-bottom { display: none; }
+}

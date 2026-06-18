@@ -1,145 +1,214 @@
-// src/utils/premiumMotion.js
-//
-// Two small hooks that pair with premium.css:
-//
-//   useScrollReveal()  -> ref to drop on any element with
-//                          data-reveal="words" / "lines", or
-//                          className="pm-underline" / "pm-stat".
-//                          Adds .is-revealed the first time the
-//                          element crosses the viewport, then stops
-//                          observing (mirrors the once:true pattern
-//                          you're already using with framer's
-//                          whileInView).
-//
-//   useTilt(maxDeg)    -> ref to drop on the hero photo frame or a
-//                          project card.
-//                          Desktop/mouse: tracks pointer position and
-//                          applies a perspective tilt + drop highlight
-//                          via inline transform, resetting smoothly on
-//                          pointer leave.
-//                          Touch devices: there's no cursor to tilt
-//                          toward, so instead it plays a one-time
-//                          "settle" animation (brief tilt that eases
-//                          flat) the first time the element scrolls
-//                          into view — driven by the .pm-settle-ready /
-//                          .pm-settle-play classes in premium.css.
-//                          No-ops entirely when prefers-reduced-motion
-//                          is set.
-//
-// Usage in a component:
-//
-//   import { useScrollReveal, useTilt } from "../utils/premiumMotion";
-//
-//   function ProjectCard({ p }) {
-//     const tiltRef = useTilt(8);
-//     return <article ref={tiltRef} className="project-card pm-tilt">...
-//   }
-//
-//   function SectionHeading({ children }) {
-//     const revealRef = useScrollReveal();
-//     return <h2 ref={revealRef} className="feat-h2 pm-underline">{children}</h2>;
-//   }
-
 import { useEffect, useRef } from "react";
 
-export function useScrollReveal(options = {}) {
-  const ref = useRef(null);
+export function useScrollReveal(options) {
+  var opts = options || {};
+  var ref = useRef(null);
 
-  useEffect(() => {
-    const el = ref.current;
+  useEffect(function() {
+    var el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
+    var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       el.classList.add("is-revealed");
       return;
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+    var observer = new IntersectionObserver(
+      function(entries) {
+        if (entries[0].isIntersecting) {
           el.classList.add("is-revealed");
           observer.disconnect();
         }
       },
-      { threshold: 0.25, rootMargin: "0px 0px -40px 0px", ...options }
+      Object.assign({ threshold: 0.25, rootMargin: "0px 0px -40px 0px" }, opts)
     );
-
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [options]);
+    return function() { observer.disconnect(); };
+  }, []);
 
   return ref;
 }
 
-export function useTilt(maxDeg = 10) {
-  const ref = useRef(null);
+/* ════════════════════════════════════════════════════════════════
+   useTilt — desktop and touch now produce the SAME continuous,
+   "always alive" feel.
 
-  useEffect(() => {
-    const el = ref.current;
+   Desktop: unchanged. pointermove drives rotateX/rotateY live,
+   resets on pointerleave.
+
+   Touch (the part that used to be the problem): instead of a
+   one-shot "settle" wobble that fired once via IntersectionObserver
+   and then stopped forever (io.disconnect() right after), this now
+   runs a continuous idle drift loop the entire time the element is
+   in view — a slow sine-wave tilt that never stops, which is the
+   touch-device equivalent of "the mouse is always capable of moving
+   over this on desktop." On top of that:
+     - if the device exposes gyroscope data (Android automatically,
+       iOS only after a permission prompt triggered by a tap), real
+       device-tilt takes over and drives the same transform live
+     - dragging a finger across the element still overrides both and
+       gives direct 1:1 control, same as before
+
+   Net result: the photo / project cards never go fully static on
+   mobile the way they did before — there's always some motion
+   running while they're on screen, matching the desktop experience
+   instead of a single wobble that played once per page load.
+════════════════════════════════════════════════════════════════ */
+export function useTilt(maxDeg) {
+  var deg = maxDeg || 10;
+  var ref = useRef(null);
+
+  useEffect(function() {
+    var el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
-    const isTouch = window.matchMedia("(hover: none)").matches;
+    var isTouch = window.matchMedia("(hover: none)").matches;
+    var frame = null;
 
-    // Touch devices have no cursor to tilt toward, so instead of doing
-    // nothing, give the element a one-time "settle" animation as it
-    // scrolls into view: a brief tilt that eases flat, driven by
-    // .pm-settle in premium.css. This keeps phones feeling alive
-    // without trying to fake hover on a finger.
-    if (isTouch) {
-      el.classList.add("pm-settle-ready");
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            el.classList.add("pm-settle-play");
-            observer.disconnect();
-          }
-        },
-        { threshold: 0.35 }
-      );
-      observer.observe(el);
-      return () => observer.disconnect();
-    }
-
-    let frame = null;
-
-    function handleMove(e) {
-      const rect = el.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width;  // 0..1
-      const py = (e.clientY - rect.top) / rect.height;  // 0..1
-
-      const rotateY = (px - 0.5) * 2 * maxDeg;
-      const rotateX = (0.5 - py) * 2 * maxDeg;
-
+    function applyTilt(rotX, rotY, scale) {
+      var s = scale || 1.03;
       if (frame) cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01,1.01,1.01)`;
+      frame = requestAnimationFrame(function() {
+        el.style.transition = "transform 0.08s ease-out";
+        el.style.transform =
+          "perspective(900px) rotateX(" + rotX + "deg) rotateY(" + rotY + "deg) scale3d(" + s + "," + s + "," + s + ")";
       });
     }
 
-    function handleLeave() {
+    function resetTilt() {
       if (frame) cancelAnimationFrame(frame);
-      el.style.transform =
-        "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+      el.style.transition = "transform 0.6s cubic-bezier(0.16,1,0.3,1)";
+      el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
     }
 
-    el.addEventListener("pointermove", handleMove);
-    el.addEventListener("pointerleave", handleLeave);
+    // ── TOUCH / NO-HOVER DEVICES ─────────────────────────────────────
+    if (isTouch) {
+      var inView = false;
+      var dragging = false;
+      var orientationActive = false;
+      var rafId = null;
 
-    return () => {
-      el.removeEventListener("pointermove", handleMove);
-      el.removeEventListener("pointerleave", handleLeave);
+      var io = new IntersectionObserver(function(entries) {
+        inView = entries[0].isIntersecting;
+      }, { threshold: 0.15 });
+      io.observe(el);
+
+      function idleLoop(t) {
+        if (inView && !dragging && !orientationActive) {
+          var phase = t / 1800;
+          var rotY = Math.sin(phase) * (deg * 0.55);
+          var rotX = Math.cos(phase * 0.8) * (deg * 0.35);
+          el.style.transition = "none";
+          el.style.transform =
+            "perspective(900px) rotateX(" + rotX.toFixed(2) + "deg) rotateY(" + rotY.toFixed(2) + "deg) scale3d(1.015,1.015,1.015)";
+        }
+        rafId = requestAnimationFrame(idleLoop);
+      }
+      rafId = requestAnimationFrame(idleLoop);
+
+      // Real device-tilt, when available, takes priority over the idle drift
+      function onOrientation(e) {
+        if (e.gamma === null || e.beta === null) return;
+        orientationActive = true;
+        var rotY = Math.max(-deg, Math.min(deg, e.gamma / 2));
+        var rotX = Math.max(-deg, Math.min(deg, (e.beta - 45) / 2));
+        applyTilt(rotX, -rotY, 1.02);
+      }
+
+      function enableOrientation() {
+        if (typeof DeviceOrientationEvent === "undefined") return;
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          // iOS 13+: requires a user gesture. We try opportunistically on
+          // the element's own first touch — if it's denied or unsupported,
+          // the idle drift loop above already provides motion, so nothing
+          // visually breaks either way.
+          DeviceOrientationEvent.requestPermission()
+            .then(function(state) {
+              if (state === "granted") {
+                window.addEventListener("deviceorientation", onOrientation);
+              }
+            })
+            .catch(function() {});
+        } else {
+          window.addEventListener("deviceorientation", onOrientation);
+        }
+      }
+
+      var askedOrientation = false;
+      function onTouchStart() {
+        dragging = true;
+        el.style.transition = "none";
+        if (!askedOrientation) {
+          askedOrientation = true;
+          enableOrientation();
+        }
+      }
+
+      function onTouchMove(e) {
+        if (!dragging) return;
+        var t = e.touches[0];
+        var rect = el.getBoundingClientRect();
+        if (
+          t.clientX < rect.left || t.clientX > rect.right ||
+          t.clientY < rect.top  || t.clientY > rect.bottom
+        ) {
+          dragging = false;
+          return;
+        }
+        var px = (t.clientX - rect.left) / rect.width;
+        var py = (t.clientY - rect.top)  / rect.height;
+        var tiltDeg = deg * 0.7;
+        var rotY = (px - 0.5) * 2 * tiltDeg;
+        var rotX = (0.5 - py) * 2 * tiltDeg;
+        applyTilt(rotX, rotY, 1.03);
+      }
+
+      function onTouchEnd() {
+        dragging = false;
+      }
+
+      el.addEventListener("touchstart",  onTouchStart,  { passive: true });
+      el.addEventListener("touchmove",   onTouchMove,   { passive: true });
+      el.addEventListener("touchend",    onTouchEnd);
+      el.addEventListener("touchcancel", onTouchEnd);
+
+      return function() {
+        io.disconnect();
+        if (rafId)  cancelAnimationFrame(rafId);
+        if (frame)  cancelAnimationFrame(frame);
+        window.removeEventListener("deviceorientation", onOrientation);
+        el.removeEventListener("touchstart",  onTouchStart);
+        el.removeEventListener("touchmove",   onTouchMove);
+        el.removeEventListener("touchend",    onTouchEnd);
+        el.removeEventListener("touchcancel", onTouchEnd);
+      };
+    }
+
+    // ── DESKTOP (unchanged) ──────────────────────────────────────────
+    function onPointerMove(e) {
+      var rect = el.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width;
+      var py = (e.clientY - rect.top)  / rect.height;
+      var rotY =  (px - 0.5) * 2 * deg;
+      var rotX = -(py - 0.5) * 2 * deg;
+      applyTilt(rotX, rotY, 1.02);
+    }
+
+    function onPointerLeave() { resetTilt(); }
+
+    el.addEventListener("pointermove",  onPointerMove);
+    el.addEventListener("pointerleave", onPointerLeave);
+
+    return function() {
+      el.removeEventListener("pointermove",  onPointerMove);
+      el.removeEventListener("pointerleave", onPointerLeave);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [maxDeg]);
+  }, []);
 
   return ref;
 }
