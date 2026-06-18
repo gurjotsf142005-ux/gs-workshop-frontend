@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CLOUD_NAME    = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-const MAX_DIMENSION = 1600; // longest edge, px — tune to taste
+const MAX_DIMENSION = 1600; // longest edge, px
 const JPEG_QUALITY  = 0.8;
 
-// Resize + compress in the browser BEFORE uploading. This is the actual
-// fix for slow uploads — a raw 4-5MB phone photo was being sent as-is.
+// Resize + compress in the browser BEFORE uploading.
 function compressImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -15,7 +14,8 @@ function compressImage(file) {
 
     reader.onload = (e) => {
       img.onload = () => {
-        let { width, height } = img;
+        let { width = img.width;
+        let height = img.height;
 
         if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
           if (width > height) {
@@ -51,16 +51,32 @@ function compressImage(file) {
   });
 }
 
-export default function ImageUploadField({ value = "", onChange, label = "Image" }) {
+export default function ImageUploadField({ value = "", onChange, label = "Image", isCritical = false }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError]         = useState("");
   const [imageLoading, setImageLoading] = useState(true);
+
+  // Aggressive Preloading: Injects a link rel="preload" into the document head if the image is critical.
+  // This forces the browser to fetch the optimized image in the first 0.1 seconds of page load.
+  useEffect(() => {
+    if (isCritical && value && value.includes("cloudinary.com")) {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = value;
+      document.head.appendChild(link);
+
+      // Cleanup preloader on unmount
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [isCritical, value]);
 
   async function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file size (max 5MB) — checked on the original file
     if (file.size > 5 * 1024 * 1024) {
       setError("File too large (max 5MB). Choose a smaller photo.");
       e.target.value = "";
@@ -68,7 +84,7 @@ export default function ImageUploadField({ value = "", onChange, label = "Image"
     }
 
     if (!CLOUD_NAME || !UPLOAD_PRESET) {
-      setError("Cloudinary not configured — paste a URL above, or add VITE_CLOUDINARY_CLOUD_NAME + VITE_CLOUDINARY_UPLOAD_PRESET to .env");
+      setError("Cloudinary not configured — add VITE_CLOUDINARY_CLOUD_NAME + VITE_CLOUDINARY_UPLOAD_PRESET to .env");
       e.target.value = "";
       return;
     }
@@ -83,9 +99,6 @@ export default function ImageUploadField({ value = "", onChange, label = "Image"
       fd.append("file", compressedBlob, file.name.replace(/\.\w+$/, ".jpg"));
       fd.append("upload_preset", UPLOAD_PRESET);
 
-      // NOTE: for *unsigned* uploads, Cloudinary largely ignores ad-hoc
-      // "transformation" form fields. Configure incoming/eager transforms
-      // on the upload preset itself (Cloudinary dashboard) instead.
       const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: "POST",
         body: fd
@@ -93,7 +106,7 @@ export default function ImageUploadField({ value = "", onChange, label = "Image"
       const data = await res.json();
 
       if (data.secure_url) {
-        // Added f_auto so Cloudinary serves WebP/AVIF where supported
+        // f_auto instructs Cloudinary to dynamically serve WebP/AVIF
         const optimizedUrl = data.secure_url.replace(
           '/upload/',
           '/upload/c_auto,q_auto,f_auto,w_800/'
@@ -155,7 +168,8 @@ export default function ImageUploadField({ value = "", onChange, label = "Image"
             className="adm-img-preview"
             src={value}
             alt="Preview"
-            loading="lazy"
+            // If the image is critical, load it eagerly (immediately), otherwise lazily
+            loading={isCritical ? "eager" : "lazy"} 
             onLoad={() => setImageLoading(false)}
             style={{ display: imageLoading ? 'none' : 'block' }}
           />
