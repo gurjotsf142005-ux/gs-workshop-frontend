@@ -148,4 +148,17 @@
 
   .pm-hero-badge span   { font-size: 8px; }
   .pm-hero-badge strong { font-size: 10px; }
+}@media (max-width: 768px) {
+  .hero {
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .section-divider,
+  .marquee-wrap,
+  .features,
+  .projects-section {
+    margin-top: 0 !important;
+    margin: 0 auto;
+  }
 }

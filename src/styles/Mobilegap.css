@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE FIX: Remove gap between hero and next section
+═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Hero — NO margin bottom */
+  .hero {
+    display: grid;
+    grid-template-columns: 0.6fr 0.4fr;
+    gap: 8px;
+    padding: 16px 10px 12px;  /* Reduced bottom padding */
+    margin: 0;                 /* ← Force no margin */
+    margin-bottom: 0;          /* ← Explicit no margin-bottom */
+    min-height: auto;
+    align-items: center;
+    background: #FEFDFB;
+  }
+
+  /* Section divider — NO margin top */
+  .section-divider {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Marquee wrap — NO margin */
+  .marquee-wrap {
+    margin: 0 !important;
+    padding: 12px 0;  /* Reduced from 14px */
+  }
+
+  /* Features — NO margin top */
+  .features {
+    margin-top: 0 !important;
+    margin: 0 auto;
+    padding: 40px 12px;  /* Tight padding */
+  }
+
+  /* Projects section — NO margin top */
+  .projects-section {
+    margin-top: 0 !important;
+    margin: 0 auto;
+    padding: 40px 12px;
+  }
+
+  /* About section — NO margin top */
+  .about {
+    margin-top: 0 !important;
+    margin: 0 auto;
+    padding: 40px 12px;
+  }
+
+  /* Contact section — NO margin top */
+  .contact {
+    margin-top: 0 !important;
+    margin: 0 auto;
+    padding: 40px 12px;
+  }
+
+  /* Footer — NO margin */
+  .footer {
+    margin-top: 0 !important;
+    padding: 20px 12px;
+  }
+
+  /* Hero internal elements */
+  .hero-left,
+  .hero-right {
+    margin: 0;
+  }
+
+  .hero-right,
+  .hero-photo-wrap {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .pm-hero-frame {
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    max-height: none;
+    width: 100%;
+    margin: 0;
+    box-shadow:
+      0 2px 0 rgba(212, 175, 106, 0.4) inset,
+      0 12px 28px -8px rgba(0, 0, 0, 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .hero-right-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin: 4px 0 0 0;  /* Tight margin */
+  }
+
+  /* Remove gaps from text sections */
+  .hero-eyebrow {
+    margin-bottom: 4px;
+  }
+
+  .hero-h1 {
+    margin-bottom: 4px;
+  }
+
+  .hero-p {
+    margin-bottom: 6px;
+  }
+
+  .hero-btns {
+    margin-bottom: 6px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   VERY SMALL PHONES (≤ 400px)
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  .hero {
+    margin: 0;
+    margin-bottom: 0 !important;
+    padding: 10px 6px 8px;
+    gap: 6px;
+  }
+
+  .marquee-wrap,
+  .features,
+  .projects-section,
+  .about,
+  .contact {
+    margin: 0 !important;
+    padding: 30px 8px;
+  }
+
+  .footer {
+    margin: 0 !important;
+    padding: 16px 8px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ALL SCREENS: Ensure no vertical gaps
+═══════════════════════════════════════════════════════════════════ */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure sections sit flush */
+main, section {
+  margin-top: 0;
+  margin-bottom: 0;
+}

@@ -9,6 +9,7 @@ import "./styles/Navmobilemenu.css"
 import "./styles/Zzfinalfixes.css"
 import "./styles/Navbarroyal.css"
 import "./styles/Heromobile.css"
+import "./styles/mobilegap.css"
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
