@@ -14,8 +14,7 @@ function compressImage(file) {
 
     reader.onload = (e) => {
       img.onload = () => {
-        let { width = img.width;
-        let height = img.height;
+        let { width = img.width, height } = img; // Fixed typo here
 
         if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
           if (width > height) {
