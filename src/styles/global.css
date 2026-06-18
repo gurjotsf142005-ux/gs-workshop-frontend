@@ -1092,4 +1092,22 @@ a   { text-decoration: none; color: inherit; }
     animation: none !important;
   }
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}/* OVERRIDE ALL GAPS - NUCLEAR OPTION */
+.hero {
+  margin: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: -10px !important;
+}
+
+/* Force sections to stack with negative margins if needed */
+.marquee-wrap {
+  margin-top: -5px !important;
+}
+
+.features {
+  margin-top: -5px !important;
+}
+
+.projects-section {
+  margin-top: -5px !important;
 }
