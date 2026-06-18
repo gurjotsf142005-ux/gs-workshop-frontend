@@ -771,7 +771,8 @@ h1, h2, h3 {
   .hero {
     grid-template-columns: 1fr 1fr;
     gap: var(--sp-xs);
-    padding: calc(3.5rem + var(--sp-xs)) var(--sp-sm) var(--sp-md);
+    /* navbar is ~56px; add extra room so eyebrow isn't clipped */
+    padding: calc(56px + 1.5rem) var(--sp-sm) var(--sp-md);
   }
   .hero-h1         { font-size: clamp(1.1rem, 5vw, 2rem); }
   .hero-p          { font-size: 0.78rem; }
@@ -788,7 +789,10 @@ h1, h2, h3 {
 
 /* Very small phones — still two columns but absolute minimum sizing */
 @media (max-width: 380px) {
-  .hero { padding-inline: var(--sp-xs); gap: var(--sp-xs); }
+  .hero {
+    padding: calc(56px + 1rem) var(--sp-xs) var(--sp-md);
+    gap: var(--sp-xs);
+  }
   .hero-h1 { font-size: 1rem; }
 }
 
