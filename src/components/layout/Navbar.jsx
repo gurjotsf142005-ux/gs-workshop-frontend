@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import "../../styles/royal-ledger.css";
+
 
 export default function Navbar({ settings = {} }) {
   const [menuOpen, setMenuOpen] = useState(false);

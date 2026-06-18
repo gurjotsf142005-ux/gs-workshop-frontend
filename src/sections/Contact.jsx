@@ -1,7 +1,8 @@
 import { Camera, GitBranch, Mail, User } from "lucide-react";
 import { motion } from "framer-motion";
-import { reveal, revealRight } from "../utils/motion";
-import { useScrollReveal } from "../utils/premiumMotion";
+import { useScrollReveal, reveal, revealRight } from "../lib/hooks";
+import "../styles/royal-ledger.css";
+
 
 export default function Contact({ settings = {} }) {
   const items = [

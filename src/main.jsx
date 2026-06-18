@@ -1,15 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./styles/global.css";
+
 import "./styles/admin.css";
-import "./styles/premium.css";
-import "./styles/Premiumroyal.css"
-import "./styles/Navmobilemenu.css"
-import "./styles/Zzfinalfixes.css"
-import "./styles/Navbarroyal.css"
-import "./styles/Heromobile.css"
-import "./styles/mobilegap.css"
+import "./styles/royal-ledger.css";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />

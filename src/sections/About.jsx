@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { aboutCards as defaultCards } from "../data/siteData";
-import { reveal, revealRight } from "../utils/motion";
-import { useScrollReveal } from "../utils/premiumMotion";
+import { useScrollReveal, reveal, revealRight } from "../lib/hooks";
+import "../styles/royal-ledger.css";
+
 
 export default function About({ settings = {} }) {
   const cards = Array.isArray(settings.aboutCards) && settings.aboutCards.length

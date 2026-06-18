@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { getPublicProjects } from "../services/api";
-import { useScrollReveal, useTilt } from "../utils/premiumMotion";
+import { useTilt, useScrollReveal } from "../lib/hooks";
+import "../styles/royal-ledger.css";
 
 function TiltProjectCard({ p, index }) {
   const tiltRef  = useTilt(7);

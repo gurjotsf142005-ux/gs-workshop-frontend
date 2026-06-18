@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { reveal, stagger, wordReveal } from "../utils/motion";
-import { useTilt } from "../utils/premiumMotion";
+import { useTilt, stagger, wordReveal, reveal } from "../lib/hooks";
+
+import "../styles/royal-ledger.css";
 
 export default function Hero({ settings }) {
   var cfg      = settings || {};

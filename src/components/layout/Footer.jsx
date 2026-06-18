@@ -1,3 +1,4 @@
+import "../../styles/royal-ledger.css"
 export default function Footer({ settings = {} }) {
   const links = Array.isArray(settings.footerLinks) && settings.footerLinks.length
     ? settings.footerLinks

@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { services as defaultServices } from "../data/siteData";
-import { reveal, stagger } from "../utils/motion";
-import { useScrollReveal } from "../utils/premiumMotion";
+import { useScrollReveal, reveal, stagger } from "../lib/hooks";
+import "../styles/royal-ledger.css";
 
 export default function Features({ settings = {} }) {
   const visibleServices = Array.isArray(settings.services) && settings.services.length

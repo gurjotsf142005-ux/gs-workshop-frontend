@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { reveal } from "../utils/motion";
-import { useScrollReveal } from "../utils/premiumMotion";
+import { useScrollReveal, reveal } from "../lib/hooks";
+import "../styles/royal-ledger.css";
 
 const DEFAULT_STATS = [
   { value: "12+",  label: "PROJECTS SHIPPED" },

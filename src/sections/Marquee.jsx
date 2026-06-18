@@ -1,5 +1,5 @@
 import { marqueeItems as defaultItems } from "../data/siteData";
-
+import "../styles/royal-ledger.css";
 export default function Marquee({ settings = {} }) {
   const src   = Array.isArray(settings.marqueeItems) && settings.marqueeItems.length ? settings.marqueeItems : defaultItems;
   const items = [...src, ...src]; // duplicate for seamless loop
