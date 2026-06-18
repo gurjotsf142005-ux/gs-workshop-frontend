@@ -3,12 +3,22 @@ import { motion } from "framer-motion";
 import { useScrollReveal, reveal, revealRight } from "../lib/hooks";
 import "../styles/royal-ledger.css";
 
+// tel: links don't reliably support spaces/formatting across browsers
+// and WebViews — strip everything except digits and a leading "+".
+function cleanTel(phone) {
+  if (!phone) return "0000000000";
+  return phone.replace(/[^\d+]/g, "");
+}
+
 export default function Contact({ settings = {} }) {
+  const phoneDisplay = settings.contactPhone || "+91 00000 00000";
+  const phoneHref    = cleanTel(settings.contactPhone);
+
   const baseItems = [
-    { label: "Phone",     value: settings.contactPhone     || "+91 00000 00000", Icon: Phone,     href: `tel:${settings.contactPhone || "0000000000"}` },
+    { label: "Phone",     value: phoneDisplay,                                Icon: Phone,     href: `tel:${phoneHref}` },
     { label: "Email",     value: settings.contactEmail     || "your@email.com",   Icon: Mail,      href: `mailto:${settings.contactEmail || "your@email.com"}` },
     { label: "Instagram", value: settings.contactInstagram || "@yourhandle",      Icon: Camera,    href: `https://instagram.com/${(settings.contactInstagram || "").replace('@', '')}` },
-    { label: "GitHub",    value: settings.contactGithub    || "github.com/gurjot", Icon: GitBranch, href: `https://${settings.contactGithub || "github.com/gurjot"}` },
+    { label: "GitHub",    value: settings.contactGithub    || "github.com/gurjot", Icon: GitBranch, href: `https://${(settings.contactGithub || "github.com/gurjot").replace(/^https?:\/\//, '')}` },
   ];
 
   const customItems = (settings.customContacts || []).map(c => ({
