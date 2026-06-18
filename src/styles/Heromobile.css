@@ -1,11 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════
-   HERO — MOBILE (≤ 768px) — FIXED
-   Photo column now gets 60%, text gets 40% for better photo visibility
+   HERO — MOBILE (≤ 768px) — ALL DEVICES
+   2-COLUMN LAYOUT MAINTAINED: Photo (60%) | Text (40%)
+   Works on all screen sizes: Galaxy S8, iPhone XR, etc.
 ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .hero {
     display: grid;
-    grid-template-columns: 0.6fr 0.4fr;  /* ← CHANGED: 60% photo, 40% text */
+    grid-template-columns: 0.6fr 0.4fr;  /* 60% photo, 40% text - ALL screens */
     gap: 12px;
     padding: 20px 14px 32px;
     min-height: calc(100vh - 64px);
@@ -17,14 +18,12 @@
     order: 0;
   }
 
-  /* Defensive: forces the photo column to fill its grid track */
   .hero-right,
   .hero-photo-wrap {
     width: 100%;
     min-width: 0;
   }
 
-  /* Photo frame — full portrait, premium shadow */
   .pm-hero-frame {
     aspect-ratio: 3 / 4;
     border-radius: 16px;
@@ -45,7 +44,6 @@
   .pm-hero-badge span   { font-size: 9px; }
   .pm-hero-badge strong { font-size: 11px; }
 
-  /* Eyebrow */
   .hero-eyebrow {
     font-size: 8px;
     letter-spacing: 0.8px;
@@ -54,7 +52,6 @@
   }
   .h-line { width: 16px; }
 
-  /* Heading */
   .hero-h1 {
     font-size: clamp(15px, 4.6vw, 22px);
     letter-spacing: -0.4px;
@@ -62,7 +59,6 @@
     line-height: 1.1;
   }
 
-  /* Body text */
   .hero-p {
     font-size: 11px;
     line-height: 1.5;
@@ -70,7 +66,6 @@
     max-width: 100%;
   }
 
-  /* Buttons — stacked, full-width */
   .hero-btns {
     flex-direction: column;
     gap: 6px;
@@ -86,10 +81,8 @@
     box-sizing: border-box;
   }
 
-  /* Mini stat cards — hide to save space */
   .hero-mini-cards { display: none; }
 
-  /* Tech chips — tiny, wrap freely */
   .hero-right-bottom {
     display: flex;
     flex-wrap: wrap;
@@ -102,15 +95,57 @@
   }
 }
 
-/* Very small phones — stack vertically */
+/* ═══════════════════════════════════════════════════════════════════
+   VERY SMALL PHONES (≤ 400px) — Samsung Galaxy S8, iPhone SE, etc.
+   KEEP 2-COLUMN but compress spacing & text
+═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
   .hero {
-    grid-template-columns: 1fr;  /* ← Stack photo above text */
-    padding: 14px 10px 24px;
+    grid-template-columns: 0.6fr 0.4fr;  /* ← KEEP 2-COLUMN */
+    padding: 12px 8px 20px;
     gap: 8px;
   }
-  .hero-h1  { font-size: clamp(13px, 4.2vw, 17px); }
-  .hero-p   { display: none; }
-  .hero-eyebrow { display: none; }
-  .hero-right-bottom { display: none; }
+
+  .hero-eyebrow {
+    font-size: 7px;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    gap: 4px;
+  }
+  .h-line { width: 12px; }
+
+  .hero-h1 {
+    font-size: clamp(12px, 3.8vw, 16px);
+    margin-bottom: 5px;
+    line-height: 1.05;
+  }
+
+  .hero-p {
+    font-size: 9px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .hero-btns {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .hero-btns .btn-fill,
+  .hero-btns .btn-ghost {
+    padding: 7px 10px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+
+  .hero-right-bottom {
+    gap: 3px;
+    margin-top: 4px;
+  }
+  .tech-chip {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .pm-hero-badge span   { font-size: 8px; }
+  .pm-hero-badge strong { font-size: 10px; }
 }
