@@ -166,11 +166,12 @@ export default function Settings({ onLogout }) {
             <AboutCardsEditor cards={s.aboutCards || []} onChange={(v) => upd("aboutCards", v)} />
           </AdminSection>
 
-          {/* ── CONTACT ─────────────────────────────────────────────── */}
+          {/* ── CONTACT ─────────────────────────────────────────────── */}{/* ── CONTACT ─────────────────────────────────────────────── */}
           <AdminSection title="📬 Contact">
             <div className="adm-grid-2">
               <AdminInput label="Eyebrow"      value={s.contactEyebrow}    onChange={(v) => upd("contactEyebrow", v)} />
               <AdminInput label="Your Name"    value={s.contactName}       onChange={(v) => upd("contactName", v)} />
+              <AdminInput label="Phone Number" value={s.contactPhone}      onChange={(v) => upd("contactPhone", v)} />
               <AdminInput label="Email"        value={s.contactEmail}      onChange={(v) => upd("contactEmail", v)} type="email" />
               <AdminInput label="Instagram"    value={s.contactInstagram}  onChange={(v) => upd("contactInstagram", v)} />
               <AdminInput label="GitHub"       value={s.contactGithub}     onChange={(v) => upd("contactGithub", v)} />
@@ -178,8 +179,21 @@ export default function Settings({ onLogout }) {
             </div>
             <AdminTextarea label="Headline"    value={s.contactHeadline}    onChange={(v) => upd("contactHeadline", v)} rows={2} />
             <AdminTextarea label="Description" value={s.contactDescription} onChange={(v) => upd("contactDescription", v)} rows={2} />
+            
+            {/* Added dynamic custom contacts management */}
+            <AdminObjectList
+              label="Custom Contact"
+              items={s.customContacts || []}
+              onChange={(v) => upd("customContacts", v)}
+              fields={[
+                { key: "label", label: "Platform (e.g. Upwork, Twitter)" },
+                { key: "value", label: "Display Value (e.g. @username)" },
+                { key: "href",  label: "Link / Protocol (e.g. https://... or tel:91...)" },
+              ]}
+              defaultItem={{ label: "", value: "", href: "" }}
+            />
           </AdminSection>
-
+          
           {/* ── FOOTER ──────────────────────────────────────────────── */}
           <AdminSection title="🦶 Footer">
             <div className="adm-grid-2">
