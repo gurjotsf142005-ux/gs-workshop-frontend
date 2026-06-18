@@ -1,153 +1,250 @@
 /* ═══════════════════════════════════════════════════════════════════
-   MOBILE FIX: Remove gap between hero and next section
+   MOBILE: Zero-gap sections - Hero ends, next section starts immediately
 ═══════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* Hero — NO margin bottom */
+  /* ── HERO SECTION ─────────────────────────────────────── */
   .hero {
     display: grid;
     grid-template-columns: 0.6fr 0.4fr;
-    gap: 8px;
-    padding: 16px 10px 12px;  /* Reduced bottom padding */
-    margin: 0;                 /* ← Force no margin */
-    margin-bottom: 0;          /* ← Explicit no margin-bottom */
+    gap: 6px;
+    padding: 12px 8px 0px;  /* ← NO bottom padding */
+    margin: 0;
+    margin-bottom: 0 !important;
     min-height: auto;
-    align-items: center;
+    align-items: flex-start;  /* ← Align to top */
     background: #FEFDFB;
   }
 
-  /* Section divider — NO margin top */
-  .section-divider {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  /* Marquee wrap — NO margin */
-  .marquee-wrap {
-    margin: 0 !important;
-    padding: 12px 0;  /* Reduced from 14px */
-  }
-
-  /* Features — NO margin top */
-  .features {
-    margin-top: 0 !important;
-    margin: 0 auto;
-    padding: 40px 12px;  /* Tight padding */
-  }
-
-  /* Projects section — NO margin top */
-  .projects-section {
-    margin-top: 0 !important;
-    margin: 0 auto;
-    padding: 40px 12px;
-  }
-
-  /* About section — NO margin top */
-  .about {
-    margin-top: 0 !important;
-    margin: 0 auto;
-    padding: 40px 12px;
-  }
-
-  /* Contact section — NO margin top */
-  .contact {
-    margin-top: 0 !important;
-    margin: 0 auto;
-    padding: 40px 12px;
-  }
-
-  /* Footer — NO margin */
-  .footer {
-    margin-top: 0 !important;
-    padding: 20px 12px;
-  }
-
-  /* Hero internal elements */
-  .hero-left,
-  .hero-right {
+  .hero-left {
+    order: 0;
     margin: 0;
   }
 
-  .hero-right,
+  .hero-right {
+    order: 0;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
   .hero-photo-wrap {
     width: 100%;
     min-width: 0;
     margin: 0;
   }
 
+  /* Photo frame */
   .pm-hero-frame {
     aspect-ratio: 3 / 4;
-    border-radius: 12px;
-    max-height: none;
+    border-radius: 10px;
     width: 100%;
     margin: 0;
+    padding: 0;
     box-shadow:
-      0 2px 0 rgba(212, 175, 106, 0.4) inset,
-      0 12px 28px -8px rgba(0, 0, 0, 0.2),
-      0 2px 8px rgba(0, 0, 0, 0.08);
+      0 2px 0 rgba(212, 175, 106, 0.3) inset,
+      0 10px 24px -6px rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Text side - compressed */
+  .hero-eyebrow {
+    font-size: 7px;
+    margin-bottom: 3px;
+    line-height: 1;
+  }
+
+  .hero-h1 {
+    font-size: clamp(12px, 4vw, 17px);
+    margin-bottom: 3px;
+    line-height: 1.05;
+  }
+
+  .hero-p {
+    font-size: 8.5px;
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  .hero-btns .btn-fill,
+  .hero-btns .btn-ghost {
+    padding: 6px 8px;
+    font-size: 9px;
+    border-radius: 5px;
   }
 
   .hero-right-bottom {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px;
-    margin: 4px 0 0 0;  /* Tight margin */
+    gap: 2px;
+    margin: 3px 0 0 0;
   }
 
-  /* Remove gaps from text sections */
-  .hero-eyebrow {
-    margin-bottom: 4px;
+  .tech-chip {
+    font-size: 7px;
+    padding: 2px 5px;
   }
 
-  .hero-h1 {
-    margin-bottom: 4px;
+  /* ── SECTION DIVIDER ─────────────────────────────────────── */
+  .section-divider {
+    margin: 0 !important;
+    padding: 20px 0;
+    background: #fff;
   }
 
-  .hero-p {
-    margin-bottom: 6px;
+  .sdiv {
+    padding: 20px 16px;
   }
 
-  .hero-btns {
-    margin-bottom: 6px;
+  /* ── MARQUEE ─────────────────────────────────────── */
+  .marquee-wrap {
+    margin: 0 !important;
+    padding: 10px 0;
+    background: #111;
+  }
+
+  .marquee-item {
+    font-size: 11px;
+    padding: 0 16px;
+  }
+
+  /* ── FEATURES SECTION ─────────────────────────────────────── */
+  .features {
+    margin: 0 !important;
+    padding: 32px 12px;
+    background: #fff;
+  }
+
+  .feat-top {
+    margin-bottom: 28px;
+    gap: 20px;
+  }
+
+  .feat-h2 {
+    font-size: clamp(18px, 3vw, 24px);
+  }
+
+  /* ── PROJECTS SECTION ─────────────────────────────────────── */
+  .projects-section {
+    margin: 0 !important;
+    padding: 32px 12px;
+    background: #FEFDFB;
+  }
+
+  .projects-h2 {
+    font-size: clamp(18px, 3vw, 24px);
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* ── ABOUT SECTION ─────────────────────────────────────── */
+  .about {
+    margin: 0 !important;
+    padding: 32px 12px;
+    background: #fff;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* ── CONTACT SECTION ─────────────────────────────────────── */
+  .contact {
+    margin: 0 !important;
+    padding: 32px 12px;
+    background: #FEFDFB;
+  }
+
+  .contact-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────── */
+  .footer {
+    margin: 0 !important;
+    padding: 16px 12px;
+    background: #111;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   VERY SMALL PHONES (≤ 400px)
+   VERY SMALL PHONES (≤ 400px) - EVEN TIGHTER
 ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
   .hero {
-    margin: 0;
-    margin-bottom: 0 !important;
-    padding: 10px 6px 8px;
-    gap: 6px;
+    padding: 8px 5px 0px;
+    gap: 4px;
   }
 
-  .marquee-wrap,
+  .hero-eyebrow {
+    font-size: 6px;
+    margin-bottom: 2px;
+  }
+
+  .hero-h1 {
+    font-size: clamp(10px, 3.5vw, 14px);
+    margin-bottom: 2px;
+  }
+
+  .hero-p {
+    font-size: 7.5px;
+    margin-bottom: 3px;
+  }
+
+  .hero-btns {
+    gap: 2px;
+    margin-bottom: 3px;
+  }
+
+  .hero-btns .btn-fill,
+  .hero-btns .btn-ghost {
+    padding: 5px 6px;
+    font-size: 8px;
+  }
+
+  .hero-right-bottom {
+    gap: 2px;
+    margin: 2px 0 0 0;
+  }
+
+  .tech-chip {
+    font-size: 6px;
+    padding: 1px 4px;
+  }
+
   .features,
   .projects-section,
   .about,
   .contact {
-    margin: 0 !important;
-    padding: 30px 8px;
+    padding: 24px 8px;
+  }
+
+  .marquee-wrap {
+    padding: 8px 0;
   }
 
   .footer {
-    margin: 0 !important;
-    padding: 16px 8px;
+    padding: 12px 8px;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   ALL SCREENS: Ensure no vertical gaps
+   FORCE NO MARGINS ON ALL CONTAINERS
 ═══════════════════════════════════════════════════════════════════ */
-body, html, #root {
-  margin: 0;
+body, html, #root, main, section {
+  margin: 0 !important;
   padding: 0;
 }
 
-/* Ensure sections sit flush */
-main, section {
-  margin-top: 0;
-  margin-bottom: 0;
+/* Ensure Framer Motion doesn't add margins */
+[class*="framer"] {
+  margin: 0 !important;
 }
