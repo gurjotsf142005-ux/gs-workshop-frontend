@@ -183,3 +183,111 @@ export default function ImageUploadField({
   function handleUrlBlur(e) {
     const url = e.target.value.trim();
     if (url.includes("cloudinary.com") && !url.includes("f_auto")) {
+      onChange(buildCloudinaryUrl(url, isCritical ? 1200 : 800));
+    }
+  }
+
+  const deliveryUrl = buildCloudinaryUrl(value, isCritical ? 1200 : 800);
+  const blurUrl     = buildBlurUrl(value);
+
+  return (
+    <div className="adm-img-field">
+
+      <label className="adm-field">
+        <span className="adm-label">{label} (URL)</span>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={handleUrlBlur}
+          placeholder="https://res.cloudinary.com/..."
+        />
+      </label>
+
+      <label className="adm-field">
+        <span className="adm-label">Or upload a file</span>
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+          onChange={handleFile}
+          disabled={uploading}
+        />
+        {uploading && <p className="adm-hint">Compressing &amp; uploading…</p>}
+      </label>
+
+      {error && <p className="adm-error">{error}</p>}
+
+      {value && (
+        <div className="adm-preview-wrap">
+
+          {!blurReady && !mainReady && (
+            <div className="adm-skeleton" aria-hidden="true" />
+          )}
+
+          <img
+            className="adm-img adm-img-blur"
+            src={blurUrl}
+            alt=""
+            aria-hidden="true"
+            onLoad={() => setBlurReady(true)}
+            style={{ opacity: mainReady ? 0 : 1 }}
+          />
+
+          <img
+            className="adm-img adm-img-main"
+            src={deliveryUrl}
+            alt="Preview"
+            loading={isCritical ? "eager" : "lazy"}
+            decoding="async"
+            onLoad={() => setMainReady(true)}
+            style={{ opacity: mainReady ? 1 : 0 }}
+          />
+        </div>
+      )}
+
+      <style>{`
+        .adm-preview-wrap {
+          position: relative;
+          width: 100%;
+          max-width: 320px;
+          aspect-ratio: 16 / 9;
+          border-radius: 8px;
+          overflow: hidden;
+          background: #1a1a1a;
+          margin-top: 8px;
+        }
+        .adm-img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: opacity 0.35s ease;
+        }
+        .adm-img-blur {
+          z-index: 1;
+          filter: blur(14px);
+          transform: scale(1.06);
+        }
+        .adm-img-main {
+          z-index: 2;
+        }
+        .adm-skeleton {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+          background-size: 200% 100%;
+          animation: adm-shimmer 1.5s infinite;
+        }
+        @keyframes adm-shimmer {
+          0%   { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .adm-skeleton { animation: none; }
+          .adm-img      { transition: none; }
+        }
+      `}</style>
+    </div>
+  );
+}

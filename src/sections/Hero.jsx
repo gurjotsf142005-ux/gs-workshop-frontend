@@ -5,17 +5,6 @@ import { useTilt, stagger, wordReveal, reveal } from "../lib/hooks";
 import "../styles/royal-ledger.css";
 
 // Strip any existing transform then apply fresh ones.
-// WHY: ImageUploadField stores URLs that may already have f_auto,q_auto,w_800.
-// If we just do url.replace('/upload/', '/upload/w_900...') we get double
-// transforms like /upload/f_auto,q_auto,w_800/upload/w_900,f_auto/ — Cloudinary
-// errors or ignores the second block entirely, serving the wrong size.
-//
-// FIX: the old regex /\/upload\/([^/]+\/)*/ greedily stripped EVERY path
-// segment after "/upload/" — including the version hash (e.g. "v1782632999/"),
-// not just the transform block. That broke the URL and is why the hero image
-// wasn't loading. This version only strips a segment that actually looks like
-// a Cloudinary transform (comma-separated "letter_value" pairs like "w_800",
-// "f_auto"), leaving the version hash untouched.
 function stripTransform(url) {
   return url.replace(/\/upload\/(?:[a-z]+_[^/,]+,)*[a-z]+_[^/,]+\//, "/upload/");
 }
@@ -26,8 +15,6 @@ function buildHeroUrl(url, width = 900) {
   return clean.replace("/upload/", `/upload/f_auto,q_auto,w_${width},c_fill/`);
 }
 
-// Tiny 30px blurred version — loads in <1KB, arrives almost instantly.
-// Gives the eye a colour-correct placeholder while the full image loads.
 function buildBlurUrl(url) {
   if (!url || !url.includes("cloudinary.com")) return url;
   const clean = stripTransform(url);
@@ -48,7 +35,6 @@ export default function Hero({ settings }) {
   const [blurReady, setBlurReady] = useState(false);
   const [mainReady, setMainReady] = useState(false);
 
-  // Reset when settings change (admin saves a new photo)
   useEffect(() => {
     setBlurReady(false);
     setMainReady(false);
@@ -57,18 +43,27 @@ export default function Hero({ settings }) {
   return (
     <section className="hero" id="home">
       <div className="hero-right">
-        <div className="hero-photo-wrap" style={{ position: "relative" }}>
+        <div className="hero-photo-wrap" style={{ position: "relative", width: "100%" }}>
           <span className="pm-hero-orbit" aria-hidden="true" />
 
           <div
             className="pm-hero-frame hero-photo-fadein"
             ref={tiltRef}
-            style={{ transformStyle: "preserve-3d" }}
+            style={{
+              transformStyle: "preserve-3d",
+              // FIX: .pm-hero-frame had no height/aspect-ratio in CSS.
+              // Since its children are all position:absolute, the frame
+              // collapsed to ~1.6px tall (absolutely positioned children
+              // don't contribute to parent height). This forces a real
+              // size so the hero image is actually visible.
+              aspectRatio: "4 / 5",
+              width: "100%",
+              position: "relative",
+            }}
           >
             {rawSrc ? (
               <div style={{ position: "relative", width: "100%", height: "100%" }}>
 
-                {/* Skeleton — shows before blur loads */}
                 {!blurReady && !mainReady && (
                   <div style={{
                     position:       "absolute",
@@ -80,7 +75,6 @@ export default function Hero({ settings }) {
                   }} />
                 )}
 
-                {/* Blur placeholder — tiny file, loads near-instantly */}
                 <img
                   src={blurSrc}
                   alt=""
@@ -94,14 +88,13 @@ export default function Hero({ settings }) {
                     objectFit:  "cover",
                     borderRadius: "inherit",
                     filter:     "blur(16px)",
-                    transform:  "scale(1.06)", // hide blur edge artifacts
+                    transform:  "scale(1.06)",
                     opacity:    mainReady ? 0 : 1,
                     transition: "opacity 0.4s ease",
                     zIndex:     1,
                   }}
                 />
 
-                {/* Full hero image */}
                 <img
                   src={heroSrc}
                   alt={cfg.heroImageAlt || "Gurjot Singh"}
