@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import WaveDivider from "../components/common/WaveDivider";
-import MainLayout from "../layouts/MainLayout";
+import MainLayout  from "../layouts/MainLayout";
 import { mergeSiteSettings, siteSettingsDefaults } from "../data/siteData";
-import { getPublicSettings } from "../services/api";
+import { getSiteSettings } from "../services/api";
+
 import About    from "../sections/About";
 import Contact  from "../sections/Contact";
 import Features from "../sections/Features";
@@ -16,7 +17,7 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true;
-    getPublicSettings()
+    getSiteSettings()                   // ← was getPublicSettings (not imported, not defined)
       .then((d) => { if (alive) setSettings(mergeSiteSettings(d.settings)); })
       .catch(() => {});
     return () => { alive = false; };

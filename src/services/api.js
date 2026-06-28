@@ -1,9 +1,3 @@
-// All API calls go through here.
-// WHY a central request() function:
-//   - Token injection in one place — never forget Authorization header on a new route
-//   - Error handling in one place — every non-OK response throws with the server's message
-//   - Base URL in one place — change VITE_API_URL in .env and everything updates
-
 const API = import.meta.env.VITE_API_URL || "https://gs-workshop.onrender.com/api";
 
 async function request(path, options = {}) {
@@ -24,11 +18,14 @@ async function request(path, options = {}) {
 }
 
 // ── Public ────────────────────────────────────────────────────────────────────
-export const getPublicProjects = (params = "") =>
-  request(`/projects${params}`);
+export const getPublicProjects = (query = {}) => {
+  // WHY URLSearchParams: converts { limit: 12 } → "?limit=12"
+  // Without this, passing an object gives /api/projects[object Object]
+  const qs = new URLSearchParams(query).toString();
+  return request(`/projects${qs ? "?" + qs : ""}`);
+};
 
-export const getSiteSettings = () =>
-  request("/settings");
+export const getSiteSettings = () => request("/settings");
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const registerAdmin = (body) =>
@@ -37,8 +34,7 @@ export const registerAdmin = (body) =>
 export const loginAdmin = (body) =>
   request("/auth/login", { method: "POST", body: JSON.stringify(body) });
 
-export const getMe = () =>
-  request("/auth/me");
+export const getMe = () => request("/auth/me");
 
 // ── Admin — Projects ──────────────────────────────────────────────────────────
 export const getAllProjects = () =>
@@ -54,8 +50,7 @@ export const deleteProject = (id) =>
   request(`/admin/projects/${id}`, { method: "DELETE" });
 
 // ── Admin — Settings ──────────────────────────────────────────────────────────
-export const getSettings = () =>
-  request("/admin/settings");
+export const getSettings = () => request("/admin/settings");
 
 export const updateSettings = (body) =>
   request("/admin/settings", { method: "PUT", body: JSON.stringify(body) });
