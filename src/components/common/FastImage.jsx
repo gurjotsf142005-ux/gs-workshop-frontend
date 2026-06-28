@@ -12,16 +12,29 @@ import { useState } from "react";
 //   <FastImage src={s.heroImage} alt="Hero" width={1200} height={800} priority />
 // ─────────────────────────────────────────────────────────────────────────────
 
+// WHY THIS CHANGED:
+// The old regex /\/upload\/([^/]+\/)*/ stripped EVERY path segment after
+// "/upload/" — including the version hash (e.g. "v1782632999/"), not just
+// the transform string (e.g. "c_auto,q_auto,f_auto,w_800/"). That silently
+// broke the URL and caused the hero image to fail to load.
+//
+// This version only strips a segment if it actually looks like a Cloudinary
+// transform (made of comma-separated "letter_value" pairs, e.g. "w_800",
+// "c_fill", "f_auto"). A version segment like "v1782632999" doesn't match
+// that shape, so it's left untouched.
+function stripTransform(url) {
+  return url.replace(/\/upload\/(?:[a-z]+_[^/,]+,)*[a-z]+_[^/,]+\//, "/upload/");
+}
+
 function buildUrl(url, width) {
   if (!url || !url.includes("cloudinary.com")) return url;
-  // Strip any existing transform to avoid stacking (e.g. f_auto on top of f_auto)
-  const clean = url.replace(/\/upload\/([^/]+\/)*/, "/upload/");
+  const clean = stripTransform(url);
   return clean.replace("/upload/", `/upload/f_auto,q_auto,w_${width},c_fill/`);
 }
 
 function buildBlurUrl(url) {
   if (!url || !url.includes("cloudinary.com")) return url;
-  const clean = url.replace(/\/upload\/([^/]+\/)*/, "/upload/");
+  const clean = stripTransform(url);
   return clean.replace("/upload/", "/upload/w_30,q_10,e_blur:400/");
 }
 

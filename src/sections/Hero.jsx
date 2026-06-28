@@ -9,9 +9,20 @@ import "../styles/royal-ledger.css";
 // If we just do url.replace('/upload/', '/upload/w_900...') we get double
 // transforms like /upload/f_auto,q_auto,w_800/upload/w_900,f_auto/ — Cloudinary
 // errors or ignores the second block entirely, serving the wrong size.
+//
+// FIX: the old regex /\/upload\/([^/]+\/)*/ greedily stripped EVERY path
+// segment after "/upload/" — including the version hash (e.g. "v1782632999/"),
+// not just the transform block. That broke the URL and is why the hero image
+// wasn't loading. This version only strips a segment that actually looks like
+// a Cloudinary transform (comma-separated "letter_value" pairs like "w_800",
+// "f_auto"), leaving the version hash untouched.
+function stripTransform(url) {
+  return url.replace(/\/upload\/(?:[a-z]+_[^/,]+,)*[a-z]+_[^/,]+\//, "/upload/");
+}
+
 function buildHeroUrl(url, width = 900) {
   if (!url || !url.includes("cloudinary.com")) return url;
-  const clean = url.replace(/\/upload\/([^/]+\/)*/, "/upload/");
+  const clean = stripTransform(url);
   return clean.replace("/upload/", `/upload/f_auto,q_auto,w_${width},c_fill/`);
 }
 
@@ -19,7 +30,7 @@ function buildHeroUrl(url, width = 900) {
 // Gives the eye a colour-correct placeholder while the full image loads.
 function buildBlurUrl(url) {
   if (!url || !url.includes("cloudinary.com")) return url;
-  const clean = url.replace(/\/upload\/([^/]+\/)*/, "/upload/");
+  const clean = stripTransform(url);
   return clean.replace("/upload/", "/upload/w_30,q_10,e_blur:400/");
 }
 
