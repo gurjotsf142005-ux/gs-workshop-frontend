@@ -1,0 +1,34 @@
+/* ── Global keyframes ────────────────────────────────────────────────────────
+   WHY HERE: FastImage.jsx and ImageUploadField.jsx both use a shimmer
+   animation. Defining it once in global CSS means the browser compiles it
+   once. Each component's inline <style> would recompile it per instance.
+
+   The shimmer moves right-to-left: gradient starts at 200% (off-screen right)
+   and ends at -200% (off-screen left), creating a single sweep across the
+   skeleton element.
+─────────────────────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fi-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes adm-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Reduced motion: disable all shimmer + transitions ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+  }
+}

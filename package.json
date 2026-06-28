@@ -2,21 +2,23 @@
   "name": "gs-workshope-client",
   "version": "1.0.0",
   "private": true,
-  "type": "module","engines": {
+  "type": "module",
+  "engines": {
     "node": "22.x"
-  }, "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "lint": "eslint .",
-  "preview": "vite preview"
-},
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "framer-motion": "latest",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "framer-motion": "latest",
-    "lucide-react": "latest"
-  },
-  "devDependencies": {}
+    "sharp": "^0.35.2",
+    "vite": "latest"
+  }
 }

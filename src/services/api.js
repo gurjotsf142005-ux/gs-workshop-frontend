@@ -1,36 +1,42 @@
-// Remove /api from the end of the fallback string
-const BASE = import.meta.env.VITE_API_URL || 'https://gs-workshop.onrender.com/api';
+import { useState, useEffect } from "react";
+import Home          from "./pages/Home";
+import Admin         from "./pages/Admin";
+import CreateAccount from "./pages/admin/CreateAccount";
 
-async function request(path, options = {}) {
-  const res = await fetch(`${BASE}${path}`, {
-    ...options,
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
-  return data;
+// WHY THIS MATTERS:
+// Original App.jsx checked window.location.pathname directly in render.
+// This works on first load but breaks on back/forward navigation — the
+// component doesn't re-render when the URL changes via pushState, so the
+// wrong page stays on screen.
+//
+// We listen to the popstate event (fired by pushState AND browser back/forward)
+// and store the path in state so any URL change triggers a re-render.
+
+function getPath() {
+  return window.location.pathname;
 }
 
-function auth() {
-  const t = localStorage.getItem('adminToken');
-  return t ? { Authorization: `Bearer ${t}` } : {};
+export default function App() {
+  const [path, setPath] = useState(getPath);
+
+  useEffect(() => {
+    // Listen for pushState navigation (AdminLayout uses this)
+    // AND browser back/forward button
+    function onNavigate() { setPath(getPath()); }
+    window.addEventListener("popstate", onNavigate);
+    return () => window.removeEventListener("popstate", onNavigate);
+  }, []);
+
+  // Route: /admin/register → CreateAccount
+  if (path === "/admin/register") {
+    return <CreateAccount />;
+  }
+
+  // Route: /admin or /admin/* → Admin panel
+  if (path.startsWith("/admin")) {
+    return <Admin />;
+  }
+
+  // Route: everything else → public site
+  return <Home />;
 }
-
-// ── Public ───────────────────────────────────────────────────────────────────
-export const getPublicProjects = (params = {}) => {
-  const q = new URLSearchParams(params).toString();
-  return request(`/projects${q ? `?${q}` : ''}`);
-};
-export const getPublicSettings = () => request('/settings');
-
-// ── Auth ─────────────────────────────────────────────────────────────────────
-export const loginAdmin    = (body) => request('/auth/login',    { method: 'POST', body: JSON.stringify(body) });
-export const registerAdmin = (body) => request('/auth/register', { method: 'POST', body: JSON.stringify(body) });
-
-// ── Admin ────────────────────────────────────────────────────────────────────
-export const getAllProjects  = ()         => request('/admin/projects',      { headers: auth() });
-export const createProject  = (body)     => request('/admin/projects',      { method: 'POST',   headers: auth(), body: JSON.stringify(body) });
-export const updateProject  = (id, body) => request(`/admin/projects/${id}`,{ method: 'PUT',    headers: auth(), body: JSON.stringify(body) });
-export const deleteProject  = (id)       => request(`/admin/projects/${id}`,{ method: 'DELETE', headers: auth() });
-export const getSettings    = ()         => request('/admin/settings',      { headers: auth() });
-export const updateSettings = (body)     => request('/admin/settings',      { method: 'PUT',    headers: auth(), body: JSON.stringify(body) });
