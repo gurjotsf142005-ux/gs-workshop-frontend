@@ -4,7 +4,6 @@ import { useTilt, stagger, wordReveal, reveal } from "../lib/hooks";
 
 import "../styles/royal-ledger.css";
 
-// Strip any existing transform then apply fresh ones.
 function stripTransform(url) {
   return url.replace(/\/upload\/(?:[a-z]+_[^/,]+,)*[a-z]+_[^/,]+\//, "/upload/");
 }
@@ -51,11 +50,6 @@ export default function Hero({ settings }) {
             ref={tiltRef}
             style={{
               transformStyle: "preserve-3d",
-              // FIX: .pm-hero-frame had no height/aspect-ratio in CSS.
-              // Since its children are all position:absolute, the frame
-              // collapsed to ~1.6px tall (absolutely positioned children
-              // don't contribute to parent height). This forces a real
-              // size so the hero image is actually visible.
               aspectRatio: "4 / 5",
               width: "100%",
               position: "relative",
