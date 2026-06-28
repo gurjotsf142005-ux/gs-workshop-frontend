@@ -1,42 +1,61 @@
-import { useState, useEffect } from "react";
-import Home          from "./pages/Home";
-import Admin         from "./pages/Admin";
-import CreateAccount from "./pages/admin/CreateAccount";
+// All API calls go through here.
+// WHY a central request() function:
+//   - Token injection in one place — never forget Authorization header on a new route
+//   - Error handling in one place — every non-OK response throws with the server's message
+//   - Base URL in one place — change VITE_API_URL in .env and everything updates
 
-// WHY THIS MATTERS:
-// Original App.jsx checked window.location.pathname directly in render.
-// This works on first load but breaks on back/forward navigation — the
-// component doesn't re-render when the URL changes via pushState, so the
-// wrong page stays on screen.
-//
-// We listen to the popstate event (fired by pushState AND browser back/forward)
-// and store the path in state so any URL change triggers a re-render.
+const API = import.meta.env.VITE_API_URL || "https://gs-workshop.onrender.com/api";
 
-function getPath() {
-  return window.location.pathname;
+async function request(path, options = {}) {
+  const token = localStorage.getItem("adminToken");
+
+  const res = await fetch(`${API}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Request failed.");
+  return data;
 }
 
-export default function App() {
-  const [path, setPath] = useState(getPath);
+// ── Public ────────────────────────────────────────────────────────────────────
+export const getPublicProjects = (params = "") =>
+  request(`/projects${params}`);
 
-  useEffect(() => {
-    // Listen for pushState navigation (AdminLayout uses this)
-    // AND browser back/forward button
-    function onNavigate() { setPath(getPath()); }
-    window.addEventListener("popstate", onNavigate);
-    return () => window.removeEventListener("popstate", onNavigate);
-  }, []);
+export const getSiteSettings = () =>
+  request("/settings");
 
-  // Route: /admin/register → CreateAccount
-  if (path === "/admin/register") {
-    return <CreateAccount />;
-  }
+// ── Auth ──────────────────────────────────────────────────────────────────────
+export const registerAdmin = (body) =>
+  request("/auth/register", { method: "POST", body: JSON.stringify(body) });
 
-  // Route: /admin or /admin/* → Admin panel
-  if (path.startsWith("/admin")) {
-    return <Admin />;
-  }
+export const loginAdmin = (body) =>
+  request("/auth/login", { method: "POST", body: JSON.stringify(body) });
 
-  // Route: everything else → public site
-  return <Home />;
-}
+export const getMe = () =>
+  request("/auth/me");
+
+// ── Admin — Projects ──────────────────────────────────────────────────────────
+export const getAllProjects = () =>
+  request("/admin/projects");
+
+export const createProject = (body) =>
+  request("/admin/projects", { method: "POST", body: JSON.stringify(body) });
+
+export const updateProject = (id, body) =>
+  request(`/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(body) });
+
+export const deleteProject = (id) =>
+  request(`/admin/projects/${id}`, { method: "DELETE" });
+
+// ── Admin — Settings ──────────────────────────────────────────────────────────
+export const getSettings = () =>
+  request("/admin/settings");
+
+export const updateSettings = (body) =>
+  request("/admin/settings", { method: "PUT", body: JSON.stringify(body) });
